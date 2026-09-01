@@ -1,6 +1,7 @@
 # Lesson 1 — Strategy Pattern in Java 25
 
-> Goal: derive Strategy from a real design problem, implement it in Java 25, run it, test it, and understand when the pattern is—and is not—worth using.
+> Goal: derive Strategy from a real design problem, implement it in Java 25, run it, test it, and understand when the
+> pattern is—and is not—worth using.
 
 ## Learning outcomes
 
@@ -28,7 +29,8 @@ static int shippingCost(int weightKg) {
 }
 ```
 
-This is good code. There is one rule and no meaningful variation. Adding interfaces and classes now would create complexity without solving a real problem.
+This is good code. There is one rule and no meaningful variation. Adding interfaces and classes now would create
+complexity without solving a real problem.
 
 ### First principle
 
@@ -92,10 +94,10 @@ Ask two questions:
 
 For checkout:
 
-| Stable | Variable |
-|---|---|
-| Add the order subtotal to shipping | How shipping is calculated |
-| Present a total | Standard, express, overnight, and future rules |
+| Stable                             | Variable                                       |
+|------------------------------------|------------------------------------------------|
+| Add the order subtotal to shipping | How shipping is calculated                     |
+| Present a total                    | Standard, express, overnight, and future rules |
 
 The stable checkout workflow needs only one capability:
 
@@ -118,6 +120,7 @@ This is the key design move: stable code depends on a stable capability, not on 
 ## 4. Express the capability as a contract
 
 ```java
+
 @FunctionalInterface
 interface ShippingPolicy {
     int costInCents(Order order);
@@ -189,7 +192,8 @@ final class CheckoutService {
 }
 ```
 
-`CheckoutService` is the **context**. It does not inherit a shipping algorithm and does not branch on shipping methods. A `ShippingPolicy` is supplied through its constructor.
+`CheckoutService` is the **context**. It does not inherit a shipping algorithm and does not branch on shipping methods.
+A `ShippingPolicy` is supplied through its constructor.
 
 ```java
 var checkout = new CheckoutService(new ExpressShipping());
@@ -224,16 +228,18 @@ The dependency points toward a capability. Concrete algorithms plug into that su
 
 We have derived **Strategy**:
 
-> Put interchangeable algorithms behind one contract and let a context use the contract without knowing the algorithm's internal details.
+> Put interchangeable algorithms behind one contract and let a context use the contract without knowing the algorithm's
+> internal details.
 
-The pattern is not merely “an interface plus several classes.” Those are implementation tools. The design intent is to isolate independently varying behavior behind a stable boundary.
+The pattern is not merely “an interface plus several classes.” Those are implementation tools. The design intent is to
+isolate independently varying behavior behind a stable boundary.
 
-| Role | This example |
-|---|---|
-| Context | `CheckoutService` |
-| Strategy contract | `ShippingPolicy` |
-| Concrete strategies | `StandardShipping`, `ExpressShipping`, `OvernightShipping` |
-| Client/composition root | Code that constructs `CheckoutService` |
+| Role                    | This example                                               |
+|-------------------------|------------------------------------------------------------|
+| Context                 | `CheckoutService`                                          |
+| Strategy contract       | `ShippingPolicy`                                           |
+| Concrete strategies     | `StandardShipping`, `ExpressShipping`, `OvernightShipping` |
+| Client/composition root | Code that constructs `CheckoutService`                     |
 
 ---
 
@@ -252,7 +258,8 @@ final class DroneShipping implements ShippingPolicy {
 
 `CheckoutService` does not change. That is **locality of change**: the new algorithm lives in its own implementation.
 
-Strategy does not guarantee that no existing file will ever change. It aims to keep algorithm changes away from stable workflow code.
+Strategy does not guarantee that no existing file will ever change. It aims to keep algorithm changes away from stable
+workflow code.
 
 ---
 
@@ -280,7 +287,8 @@ The conditional did not disappear; its responsibility changed:
 input ──> selection ──> ShippingPolicy ──> CheckoutService
 ```
 
-Keeping this small selection method is fine. If construction knowledge becomes duplicated or complicated, that new pressure leads naturally to Lesson 2: Factory.
+Keeping this small selection method is fine. If construction knowledge becomes duplicated or complicated, that new
+pressure leads naturally to Lesson 2: Factory.
 
 ---
 
@@ -292,9 +300,15 @@ A strategy test asks:
 
 ```java
 var order = new Order(10, 10_000);
-check(new StandardShipping().costInCents(order) == 2_000,
+
+check(new StandardShipping().
+
+costInCents(order) ==2_000,
         "standard shipping");
-check(new ExpressShipping().costInCents(order) == 5_000,
+
+check(new ExpressShipping().
+
+costInCents(order) ==5_000,
         "express shipping");
 ```
 
@@ -308,7 +322,7 @@ Because `ShippingPolicy` has one abstract method, a lambda can act as a determin
 ShippingPolicy fixedShipping = ignored -> 1_000;
 var checkout = new CheckoutService(fixedShipping);
 
-check(checkout.totalInCents(new Order(10, 10_000)) == 11_000,
+check(checkout.totalInCents(new Order(10, 10_000))==11_000,
         "checkout includes shipping");
 ```
 
@@ -422,25 +436,33 @@ Use IntelliJ IDEA 2025.2 or later, whose official release information includes J
 2. Select **Java**.
 3. Name the project `strategy-pattern`.
 4. Choose **IntelliJ** as the build system; this lab has no external dependencies.
-5. In **JDK**, select an installed JDK 25. If none is configured, choose **Download JDK**, select version **25** and a vendor, then confirm.
+5. In **JDK**, select an installed JDK 25. If none is configured, choose **Download JDK**, select version **25** and a
+   vendor, then confirm.
 6. If needed, open **File → Project Structure → Project** and set:
-   - **SDK:** JDK 25
-   - **Language level:** `25 – Compact source files, module imports`
+    - **SDK:** JDK 25
+    - **Language level:** `25 – Compact source files, module imports`
 7. Under the project, create `src/Main.java` and paste the complete lab.
 8. Click the green run icon next to `main`, then choose **Run 'Main.main()'**.
 
-JetBrains' current Java tutorial documents the New Project flow, selecting or downloading JDK 25, and running `main` from the editor. Its Java 25 setup article documents the SDK and language-level settings. See [Create your first Java application](https://www.jetbrains.com/help/idea/creating-and-running-your-first-java-application.html), [Java 25 LTS and IntelliJ IDEA](https://blog.jetbrains.com/idea/2025/09/java-25-lts-and-intellij-idea/), and [supported Java versions](https://www.jetbrains.com/help/idea/supported-java-versions.html).
+JetBrains' current Java tutorial documents the New Project flow, selecting or downloading JDK 25, and running `main`
+from the editor. Its Java 25 setup article documents the SDK and language-level settings.
+See [Create your first Java application](https://www.jetbrains.com/help/idea/creating-and-running-your-first-java-application.html), [Java 25 LTS and IntelliJ IDEA](https://blog.jetbrains.com/idea/2025/09/java-25-lts-and-intellij-idea/),
+and [supported Java versions](https://www.jetbrains.com/help/idea/supported-java-versions.html).
 
 ### Option B — Install the JDK separately
 
-Oracle publishes JDK 25 installation procedures for Windows, macOS, and Linux in its [JDK 25 Installation Guide](https://docs.oracle.com/en/java/javase/25/install/). Follow the operating-system-specific page there, then verify both tools:
+Oracle publishes JDK 25 installation procedures for Windows, macOS, and Linux in
+its [JDK 25 Installation Guide](https://docs.oracle.com/en/java/javase/25/install/). Follow the
+operating-system-specific page there, then verify both tools:
 
 ```shell
 java --version
 javac --version
 ```
 
-Both outputs should identify version 25. On macOS, Oracle also documents `java -version` and `/usr/libexec/java_home -v 25` for locating the selected JDK in [Installation of the JDK on macOS](https://docs.oracle.com/en/java/javase/25/install/installation-jdk-macos.html).
+Both outputs should identify version 25. On macOS, Oracle also documents `java -version` and
+`/usr/libexec/java_home -v 25` for locating the selected JDK
+in [Installation of the JDK on macOS](https://docs.oracle.com/en/java/javase/25/install/installation-jdk-macos.html).
 
 ### Option C — Compile and run from a terminal
 
@@ -451,13 +473,19 @@ javac --release 25 -d out src/Main.java
 java -cp out Main
 ```
 
-Oracle documents that `javac` compiles `.java` sources into class files, `--release 25` targets the Java SE 25 language/API release, and `-d out` selects the class-output directory. Oracle's `java` documentation defines `-cp`/`--class-path` and launching a main class. See [The `javac` command](https://docs.oracle.com/en/java/javase/25/docs/specs/man/javac.html) and [The `java` command](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html).
+Oracle documents that `javac` compiles `.java` sources into class files, `--release 25` targets the Java SE 25
+language/API release, and `-d out` selects the class-output directory. Oracle's `java` documentation defines `-cp`/
+`--class-path` and launching a main class. See [The
+`javac` command](https://docs.oracle.com/en/java/javase/25/docs/specs/man/javac.html) and [The
+`java` command](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html).
 
 ### Troubleshooting
 
 - **IntelliJ marks records or switch expressions as errors:** confirm the project SDK and language level are both 25.
-- **`javac` is not found:** a full JDK is missing from the terminal environment, or its `bin` directory is not available to the shell. Use IntelliJ's **Download JDK** path or follow Oracle's OS-specific installation guide.
-- **The IDE uses a different Java version than the terminal:** IntelliJ's project SDK is configured independently of the terminal's default JDK; check both explicitly.
+- **`javac` is not found:** a full JDK is missing from the terminal environment, or its `bin` directory is not available
+  to the shell. Use IntelliJ's **Download JDK** path or follow Oracle's OS-specific installation guide.
+- **The IDE uses a different Java version than the terminal:** IntelliJ's project SDK is configured independently of the
+  terminal's default JDK; check both explicitly.
 - **Do I need `--enable-preview`?** No. This lab intentionally avoids preview features.
 
 ---
@@ -506,6 +534,7 @@ Work in this order:
 <summary>One possible solution</summary>
 
 ```java
+
 @FunctionalInterface
 interface DiscountPolicy {
     int discountInCents(int amountInCents);
@@ -619,6 +648,7 @@ Only first-party documentation was used for Java and IntelliJ setup:
 - Oracle, [JDK 25 Installation Guide](https://docs.oracle.com/en/java/javase/25/install/)
 - Oracle, [The `javac` Command — Java 25](https://docs.oracle.com/en/java/javase/25/docs/specs/man/javac.html)
 - Oracle, [The `java` Command — Java 25](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html)
-- JetBrains, [Create your first Java application](https://www.jetbrains.com/help/idea/creating-and-running-your-first-java-application.html)
+-
+JetBrains, [Create your first Java application](https://www.jetbrains.com/help/idea/creating-and-running-your-first-java-application.html)
 - JetBrains, [Supported Java versions and features](https://www.jetbrains.com/help/idea/supported-java-versions.html)
 - JetBrains, [Java 25 LTS and IntelliJ IDEA](https://blog.jetbrains.com/idea/2025/09/java-25-lts-and-intellij-idea/)
