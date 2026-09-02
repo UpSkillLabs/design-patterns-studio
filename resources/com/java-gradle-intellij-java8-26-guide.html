@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Java 8–26 with Gradle & IntelliJ IDEA — Setup Guide</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5b6474;
+      --line: #dfe4ec;
+      --soft: #f5f7fa;
+      --soft-2: #eef3f8;
+      --accent: #275ea8;
+      --accent-soft: #eaf2fd;
+      --good: #1d6b46;
+      --good-soft: #eaf7f0;
+      --warn: #8a5a00;
+      --warn-soft: #fff7e6;
+      --code-bg: #f2f4f7;
+      --paper: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: #eef1f5;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.58;
+    }
+
+    .page {
+      width: min(980px, calc(100% - 32px));
+      margin: 28px auto 64px;
+      padding: 52px 62px 64px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 10px 32px rgba(27, 39, 58, 0.08);
+    }
+
+    h1, h2, h3 { line-height: 1.2; color: #101827; }
+    h1 { margin: 0 0 12px; font-size: 2.35rem; letter-spacing: -0.035em; }
+    h2 { margin: 2.4rem 0 0.75rem; padding-top: 0.25rem; font-size: 1.55rem; letter-spacing: -0.02em; }
+    h3 { margin: 1.55rem 0 0.5rem; font-size: 1.12rem; }
+    p { margin: 0.65rem 0; }
+
+    a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .lede { max-width: 760px; margin: 0 0 18px; color: var(--muted); font-size: 1.08rem; }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .rule { height: 1px; margin: 28px 0; background: var(--line); }
+
+    .toc {
+      margin: 26px 0 8px;
+      padding: 22px 24px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--soft);
+    }
+    .toc h2 { margin: 0 0 10px; padding: 0; font-size: 1.08rem; }
+    .toc ol { margin: 0; padding-left: 1.3rem; columns: 2; column-gap: 2rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    .toc a { color: var(--ink); text-decoration: none; }
+    .toc a:hover { color: var(--accent); text-decoration: underline; }
+
+    .callout {
+      margin: 18px 0;
+      padding: 15px 18px;
+      border-left: 4px solid var(--accent);
+      border-radius: 7px;
+      background: var(--accent-soft);
+    }
+    .callout strong { color: #173f75; }
+    .callout.good { border-left-color: var(--good); background: var(--good-soft); }
+    .callout.good strong { color: var(--good); }
+    .callout.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+    .callout.warn strong { color: var(--warn); }
+
+    .architecture {
+      margin: 18px 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fbfcfe;
+      overflow-x: auto;
+    }
+
+    pre, code, kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    code {
+      padding: 0.08em 0.3em;
+      border-radius: 4px;
+      background: var(--code-bg);
+      font-size: 0.91em;
+    }
+    pre {
+      position: relative;
+      margin: 12px 0 18px;
+      padding: 16px 18px;
+      overflow-x: auto;
+      border: 1px solid #d9dee7;
+      border-radius: 8px;
+      background: var(--code-bg);
+      color: #172033;
+      font-size: 0.88rem;
+      line-height: 1.52;
+      tab-size: 4;
+      white-space: pre;
+    }
+    pre code { padding: 0; background: transparent; font-size: inherit; }
+
+    .step {
+      margin: 20px 0 30px;
+      padding-top: 2px;
+    }
+    .step-title {
+      display: flex;
+      align-items: baseline;
+      gap: 11px;
+      margin-bottom: 8px;
+    }
+    .step-no {
+      flex: 0 0 auto;
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+    .step-title h2 { margin: 0; padding: 0; }
+
+    ul, ol { padding-left: 1.35rem; }
+    li { margin: 0.35rem 0; }
+
+    table {
+      width: 100%;
+      margin: 14px 0 22px;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th, td {
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--soft-2); font-weight: 700; }
+    tr:nth-child(even) td { background: #fbfcfd; }
+
+    .checklist {
+      list-style: none;
+      padding-left: 0;
+    }
+    .checklist li { position: relative; padding-left: 1.65rem; }
+    .checklist li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--good);
+      font-weight: 800;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .card {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .card h3 { margin-top: 0; }
+
+    .small { color: var(--muted); font-size: 0.88rem; }
+    .muted { color: var(--muted); }
+
+    .source-list {
+      margin: 10px 0 0;
+      padding-left: 1.25rem;
+      font-size: 0.9rem;
+    }
+    .source-list li { margin: 0.55rem 0; }
+
+    .footer {
+      margin-top: 42px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .print-only { display: none; }
+
+    @media (max-width: 760px) {
+      .page { width: 100%; margin: 0; padding: 30px 22px 44px; border: 0; border-radius: 0; box-shadow: none; }
+      h1 { font-size: 1.95rem; }
+      .toc ol { columns: 1; }
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    @page {
+      size: A4;
+      margin: 15mm 15mm 16mm;
+    }
+
+    @media print {
+      :root { --ink: #111827; --muted: #4b5563; --line: #d7dce4; --code-bg: #f4f5f7; }
+      html, body { background: #fff !important; }
+      body { font-size: 10.3pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page { width: auto; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
+      h1 { font-size: 25pt; }
+      h2 { margin-top: 16pt; font-size: 15pt; break-after: avoid-page; }
+      h3 { font-size: 11.5pt; break-after: avoid-page; }
+      p, li { orphans: 3; widows: 3; }
+      pre { font-size: 8.3pt; white-space: pre-wrap; overflow: visible; break-inside: avoid-page; }
+      table { font-size: 8.7pt; break-inside: avoid-page; }
+      .toc, .callout, .architecture, .card { break-inside: avoid-page; }
+      .step { break-inside: auto; }
+      .step-title { break-after: avoid-page; }
+      a { color: inherit; text-decoration: none; }
+      .no-print { display: none !important; }
+      .print-only { display: inline; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div class="eyebrow">IntelliJ IDEA · Gradle · Java</div>
+      <h1>Compile and Run Java 8–26 with Gradle</h1>
+      <p class="lede">A self-contained setup guide for an IntelliJ IDEA Gradle project that can switch the JDK used to compile and run your application from Java 8 (1.8) through Java 26.</p>
+      <div class="meta">
+        <span><strong>Build:</strong> Gradle Wrapper 9.7.1</span>
+        <span><strong>Gradle JVM:</strong> JDK 21</span>
+        <span><strong>Application JDK:</strong> 8–26 via toolchains</span>
+        <span><strong>DSL:</strong> Kotlin</span>
+      </div>
+    </header>
+
+    <div class="rule"></div>
+
+    <div class="callout good">
+      <strong>Core rule:</strong> keep the JVM that runs Gradle separate from the JDK that builds and runs your application. Gradle 9.7.1 requires JVM 17–26 to execute, while project toolchains can select older JDKs for compilation and execution.
+    </div>
+
+    <div class="architecture"><pre><code>IntelliJ IDEA
+    │
+    ├── Gradle JVM: JDK 21
+    │       │
+    │       └── runs Gradle Wrapper 9.7.1
+    │
+    └── Project Java Toolchain
+            │
+            ├── JDK 8
+            ├── JDK 9
+            ├── ...
+            ├── JDK 25
+            └── JDK 26
+
+Gradle JVM  ≠  Project Java version</code></pre></div>
+
+    <nav class="toc" aria-label="Table of contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#create-project">Create the IntelliJ project</a></li>
+        <li><a href="#gradle-jvm">Set the Gradle JVM</a></li>
+        <li><a href="#settings">Configure JDK provisioning</a></li>
+        <li><a href="#properties">Add the Java version property</a></li>
+        <li><a href="#build-script">Configure the build</a></li>
+        <li><a href="#main-class">Create a test program</a></li>
+        <li><a href="#sync">Sync and inspect toolchains</a></li>
+        <li><a href="#compile-run">Compile and run</a></li>
+        <li><a href="#intellij-workflow">Daily IntelliJ workflow</a></li>
+        <li><a href="#run-configs">Optional run configurations</a></li>
+        <li><a href="#compatibility">Compatibility notes</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <li><a href="#final-files">Final file set</a></li>
+        <li><a href="#sources">Official sources</a></li>
+      </ol>
+    </nav>
+
+    <section id="prerequisites" class="step">
+      <div class="step-title"><span class="step-no">1</span><h2>Prerequisites</h2></div>
+      <p>Install IntelliJ IDEA and one modern JDK to run Gradle. This guide uses <strong>JDK 21</strong> as the stable baseline for the Gradle JVM.</p>
+      <p>In IntelliJ IDEA:</p>
+      <pre><code>File → Project Structure → SDKs → + → Download JDK
+Version: 21</code></pre>
+      <div class="callout">
+        <strong>You do not need to manually install every JDK from 8 through 26.</strong> Gradle can auto-provision matching JDKs when a toolchain download repository is configured. Locally installed JDKs are also auto-detected.
+      </div>
+    </section>
+
+    <section id="create-project" class="step">
+      <div class="step-title"><span class="step-no">2</span><h2>Create the IntelliJ Gradle project</h2></div>
+      <p>Create a new Java project:</p>
+      <pre><code>File → New → Project
+
+Language:      Java
+Build system:  Gradle
+JDK:           21
+Gradle DSL:    Kotlin</code></pre>
+      <p>Use the <strong>Gradle Wrapper</strong> as the distribution. The wrapper pins the Gradle version for the project and avoids relying on a machine-wide Gradle installation.</p>
+
+      <h3>Expected structure</h3>
+      <pre><code>java-version-lab/
+├── gradle/
+│   └── wrapper/
+├── gradlew
+├── gradlew.bat
+├── gradle.properties
+├── settings.gradle.kts
+├── build.gradle.kts
+└── src/
+    └── main/
+        └── java/
+            └── org/
+                └── example/
+                    └── Main.java</code></pre>
+    </section>
+
+    <section id="gradle-jvm" class="step">
+      <div class="step-title"><span class="step-no">3</span><h2>Set the Gradle JVM to JDK 21</h2></div>
+      <p>Open:</p>
+      <pre><code>Settings → Build, Execution, Deployment → Build Tools → Gradle</code></pre>
+      <p>Set:</p>
+      <pre><code>Distribution:   gradle-wrapper.properties / Wrapper
+Gradle JVM:     JDK 21
+Run tests using: Gradle</code></pre>
+      <div class="callout warn">
+        <strong>Do not set the Gradle JVM to Java 8.</strong> Gradle 9.7.1 requires a JVM between 17 and 26 to execute.
+      </div>
+    </section>
+
+    <section id="settings" class="step">
+      <div class="step-title"><span class="step-no">4</span><h2>Configure automatic JDK provisioning</h2></div>
+      <p>Replace <code>settings.gradle.kts</code> with:</p>
+      <pre><code>plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
+rootProject.name = "java-version-lab"</code></pre>
+      <p>The Foojay resolver plugin gives Gradle a toolchain download repository. If a matching JDK is not already installed, Gradle can download one that satisfies the requested toolchain.</p>
+      <div class="callout warn">
+        <strong>⚠️ Provisioning availability:</strong> a requested JDK still has to be available for your operating system and CPU architecture through the configured resolver. If provisioning fails, install that JDK locally and let Gradle auto-detect it.
+      </div>
+    </section>
+
+    <section id="properties" class="step">
+      <div class="step-title"><span class="step-no">5</span><h2>Add a project Java-version property</h2></div>
+      <p>Create or edit <code>gradle.properties</code>:</p>
+      <pre><code>javaVersion=21</code></pre>
+      <p>This is the normal day-to-day switch:</p>
+      <div class="two-col">
+        <div class="card">
+          <h3>Java 8</h3>
+          <pre><code>javaVersion=8</code></pre>
+        </div>
+        <div class="card">
+          <h3>Java 26</h3>
+          <pre><code>javaVersion=26</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="build-script" class="step">
+      <div class="step-title"><span class="step-no">6</span><h2>Configure <code>build.gradle.kts</code></h2></div>
+      <p>Replace <code>build.gradle.kts</code> with:</p>
+      <pre><code>plugins {
+    application
+}
+
+repositories {
+    mavenCentral()
+}
+
+val targetJavaVersion = providers
+    .gradleProperty("javaVersion")
+    .orElse("21")
+    .get()
+    .toInt()
+
+require(targetJavaVersion in 8..26) {
+    "javaVersion must be between 8 and 26. Current value: $targetJavaVersion"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+application {
+    mainClass = "org.example.Main"
+}
+
+tasks.withType&lt;JavaCompile&gt;().configureEach {
+    options.encoding = "UTF-8"
+}</code></pre>
+
+      <p>The important part is the project toolchain:</p>
+      <pre><code>java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}</code></pre>
+      <p>Gradle uses the configured toolchain for Java tasks that need JVM tools, including compilation and execution. The <code>application</code> plugin supplies the <code>run</code> task.</p>
+    </section>
+
+    <section id="main-class" class="step">
+      <div class="step-title"><span class="step-no">7</span><h2>Create a Java program that reports its runtime</h2></div>
+      <p>Create:</p>
+      <pre><code>src/main/java/org/example/Main.java</code></pre>
+      <p>Add:</p>
+      <pre><code>package org.example;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello from Java");
+        System.out.println("Java version : " + System.getProperty("java.version"));
+        System.out.println("Java vendor  : " + System.getProperty("java.vendor"));
+        System.out.println("Java home    : " + System.getProperty("java.home"));
+    }
+}</code></pre>
+      <p>This example intentionally uses Java 8-compatible syntax so it can be compiled across the entire requested range.</p>
+    </section>
+
+    <section id="sync" class="step">
+      <div class="step-title"><span class="step-no">8</span><h2>Sync Gradle and inspect toolchains</h2></div>
+      <p>In IntelliJ IDEA, use <strong>Sync Gradle Changes</strong> / <strong>Reload All Gradle Projects</strong>.</p>
+      <p>Then inspect the JDKs Gradle sees.</p>
+
+      <h3>macOS / Linux</h3>
+      <pre><code>./gradlew -q javaToolchains</code></pre>
+
+      <h3>Windows PowerShell</h3>
+      <pre><code>.\gradlew.bat -q javaToolchains</code></pre>
+
+      <p>The output shows auto-detection, auto-download status, and detected toolchain metadata.</p>
+    </section>
+
+    <section id="compile-run" class="step">
+      <div class="step-title"><span class="step-no">9</span><h2>Compile and run with Java 8–26</h2></div>
+
+      <h3>Temporary command-line override</h3>
+      <p>You can override <code>gradle.properties</code> for a single invocation with <code>-PjavaVersion=X</code>.</p>
+
+      <table>
+        <thead>
+          <tr><th>Goal</th><th>macOS / Linux</th><th>Windows PowerShell</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Compile with Java 8</td><td><code>./gradlew clean compileJava -PjavaVersion=8</code></td><td><code>.\gradlew.bat clean compileJava -PjavaVersion=8</code></td></tr>
+          <tr><td>Run with Java 8</td><td><code>./gradlew clean run -PjavaVersion=8</code></td><td><code>.\gradlew.bat clean run -PjavaVersion=8</code></td></tr>
+          <tr><td>Run with Java 17</td><td><code>./gradlew clean run -PjavaVersion=17</code></td><td><code>.\gradlew.bat clean run -PjavaVersion=17</code></td></tr>
+          <tr><td>Run with Java 21</td><td><code>./gradlew clean run -PjavaVersion=21</code></td><td><code>.\gradlew.bat clean run -PjavaVersion=21</code></td></tr>
+          <tr><td>Run with Java 26</td><td><code>./gradlew clean run -PjavaVersion=26</code></td><td><code>.\gradlew.bat clean run -PjavaVersion=26</code></td></tr>
+        </tbody>
+      </table>
+
+      <p>The same pattern works for every integer Java version from <strong>8 through 26</strong>:</p>
+      <pre><code>./gradlew clean run -PjavaVersion=&lt;8..26&gt;</code></pre>
+
+      <h3>Build without running</h3>
+      <pre><code>./gradlew clean build -PjavaVersion=8
+./gradlew clean build -PjavaVersion=26</code></pre>
+
+      <h3>Expected runtime verification</h3>
+      <p>When running with Java 8, the program should report a Java 8 runtime. When running with Java 26, it should report Java 26. The exact vendor/version string depends on the JDK distribution selected by the toolchain resolver.</p>
+    </section>
+
+    <section id="intellij-workflow" class="step">
+      <div class="step-title"><span class="step-no">10</span><h2>Recommended daily IntelliJ workflow</h2></div>
+      <p>For normal development, change <code>gradle.properties</code>, then sync Gradle.</p>
+
+      <h3>Develop against Java 8</h3>
+      <pre><code>javaVersion=8</code></pre>
+      <p>Sync Gradle, write Java 8-compatible code, then run the Gradle <code>run</code> task.</p>
+
+      <h3>Develop against Java 26</h3>
+      <pre><code>javaVersion=26</code></pre>
+      <p>Sync Gradle again. IntelliJ imports the updated Gradle project model, and Gradle compiles/runs with the Java 26 toolchain.</p>
+
+      <div class="callout">
+        <strong>Use <code>gradle.properties</code> for persistent IDE work.</strong> Use <code>-PjavaVersion=X</code> when you only need a one-off command-line test.
+      </div>
+    </section>
+
+    <section id="run-configs" class="step">
+      <div class="step-title"><span class="step-no">11</span><h2>Optional: create IntelliJ Gradle run configurations</h2></div>
+      <p>You can create named Gradle configurations such as <strong>Run Java 8</strong>, <strong>Run Java 17</strong>, and <strong>Run Java 26</strong>.</p>
+      <pre><code>Run → Edit Configurations → + → Gradle</code></pre>
+
+      <div class="two-col">
+        <div class="card">
+          <h3>Run Java 8</h3>
+          <pre><code>Tasks:
+clean run
+
+Arguments:
+-PjavaVersion=8</code></pre>
+        </div>
+        <div class="card">
+          <h3>Run Java 26</h3>
+          <pre><code>Tasks:
+clean run
+
+Arguments:
+-PjavaVersion=26</code></pre>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <strong>Editor caveat:</strong> a one-off Gradle run configuration changes that Gradle invocation; it does not necessarily make the editor behave as if the entire imported project has permanently switched language levels. For version-specific editing, change <code>gradle.properties</code> and re-sync the project.
+      </div>
+    </section>
+
+    <section id="compatibility" class="step">
+      <div class="step-title"><span class="step-no">12</span><h2>Compatibility notes</h2></div>
+
+      <h3>Gradle runtime compatibility</h3>
+      <p>For Gradle 9.7.1, the official compatibility matrix requires JVM <strong>17 through 26</strong> to execute Gradle. Java 26 support for running Gradle starts at Gradle 9.4.0.</p>
+
+      <h3>Toolchain versus <code>sourceCompatibility</code></h3>
+      <p>Prefer Java toolchains when the goal is to select the actual JDK used by the build:</p>
+      <pre><code>java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}</code></pre>
+      <p><code>sourceCompatibility</code> / <code>targetCompatibility</code> control source and bytecode compatibility but do not, by themselves, guarantee which JDK installation is used. Gradle's current documentation recommends toolchains for most users.</p>
+
+      <h3>Toolchain versus <code>--release</code></h3>
+      <table>
+        <thead><tr><th>Mechanism</th><th>What it controls</th><th>Use it when…</th></tr></thead>
+        <tbody>
+          <tr><td>Java toolchain</td><td>Selects the JDK/tool set used to compile/run.</td><td>You want to test against real JDK versions.</td></tr>
+          <tr><td><code>--release</code></td><td>Constrains language/API/bytecode compatibility while using a compiler that may be newer.</td><td>You need strict cross-compilation compatibility.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Dependencies can still block old Java runtimes</h3>
+      <div class="callout warn">
+        <strong>⚠️ Important:</strong> compiling your source for Java 8 does not make third-party libraries Java 8-compatible. Every runtime dependency must also support the selected Java version.
+      </div>
+
+      <h3>Version-specific syntax should fail where expected</h3>
+      <p>If you switch to Java 8 and write syntax introduced later, compilation should fail. That is the intended behavior: the selected toolchain is enforcing the actual language/compiler environment.</p>
+    </section>
+
+    <section id="troubleshooting" class="step">
+      <div class="step-title"><span class="step-no">13</span><h2>Troubleshooting</h2></div>
+
+      <h3>“Gradle cannot run on this Java version”</h3>
+      <p>Check the <strong>Gradle JVM</strong> in IntelliJ. Keep it on JDK 21 (or another supported 17–26 JVM for Gradle 9.7.1). Do not point Gradle itself at JDK 8–16.</p>
+
+      <h3>No matching toolchain found</h3>
+      <ol>
+        <li>Confirm the Foojay resolver plugin is present in <code>settings.gradle.kts</code>.</li>
+        <li>Run <code>./gradlew -q javaToolchains</code>.</li>
+        <li>Confirm auto-download is enabled.</li>
+        <li>If no matching downloadable JDK is available for your OS/architecture, install the JDK locally and re-run the toolchain report.</li>
+      </ol>
+
+      <h3>IntelliJ editor accepts/rejects the wrong syntax</h3>
+      <p>Change <code>javaVersion</code> in <code>gradle.properties</code> and sync the Gradle project. Also inspect the module language level in Project Structure if the IDE model still appears stale.</p>
+
+      <h3>Build works on Java 21 but fails on Java 8</h3>
+      <p>Check both your source language features and all dependencies. A dependency compiled for a newer Java class-file version cannot run on Java 8.</p>
+    </section>
+
+    <section id="final-files" class="step">
+      <div class="step-title"><span class="step-no">14</span><h2>Final file set</h2></div>
+
+      <h3><code>settings.gradle.kts</code></h3>
+      <pre><code>plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
+rootProject.name = "java-version-lab"</code></pre>
+
+      <h3><code>gradle.properties</code></h3>
+      <pre><code>javaVersion=21</code></pre>
+
+      <h3><code>build.gradle.kts</code></h3>
+      <pre><code>plugins {
+    application
+}
+
+repositories {
+    mavenCentral()
+}
+
+val targetJavaVersion = providers
+    .gradleProperty("javaVersion")
+    .orElse("21")
+    .get()
+    .toInt()
+
+require(targetJavaVersion in 8..26) {
+    "javaVersion must be between 8 and 26. Current value: $targetJavaVersion"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+application {
+    mainClass = "org.example.Main"
+}
+
+tasks.withType&lt;JavaCompile&gt;().configureEach {
+    options.encoding = "UTF-8"
+}</code></pre>
+
+      <h3><code>src/main/java/org/example/Main.java</code></h3>
+      <pre><code>package org.example;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello from Java");
+        System.out.println("Java version : " + System.getProperty("java.version"));
+        System.out.println("Java vendor  : " + System.getProperty("java.vendor"));
+        System.out.println("Java home    : " + System.getProperty("java.home"));
+    }
+}</code></pre>
+
+      <h3>Sanity checklist</h3>
+      <ul class="checklist">
+        <li>Gradle JVM is JDK 21.</li>
+        <li>Gradle Wrapper is used.</li>
+        <li>Foojay toolchain resolver is configured.</li>
+        <li><code>javaVersion</code> is between 8 and 26.</li>
+        <li>Gradle project has been synced in IntelliJ.</li>
+        <li><code>javaToolchains</code> reports the expected JDKs or provisioning settings.</li>
+        <li><code>run</code> prints the expected runtime Java version.</li>
+      </ul>
+    </section>
+
+    <section id="sources" class="step">
+      <div class="step-title"><span class="step-no">15</span><h2>Official sources</h2></div>
+      <p class="small">These are the primary official references used to verify the compatibility and configuration details in this guide.</p>
+      <ol class="source-list">
+        <li><strong>Gradle Compatibility Matrix (9.7.1):</strong> <a href="https://docs.gradle.org/current/userguide/compatibility.html">https://docs.gradle.org/current/userguide/compatibility.html</a></li>
+        <li><strong>Gradle Java Toolchains:</strong> <a href="https://docs.gradle.org/current/userguide/toolchains.html">https://docs.gradle.org/current/userguide/toolchains.html</a></li>
+        <li><strong>Gradle Application Plugin:</strong> <a href="https://docs.gradle.org/current/userguide/application_plugin.html">https://docs.gradle.org/current/userguide/application_plugin.html</a></li>
+        <li><strong>Gradle Java Plugin:</strong> <a href="https://docs.gradle.org/current/userguide/java_plugin.html">https://docs.gradle.org/current/userguide/java_plugin.html</a></li>
+        <li><strong>IntelliJ IDEA — Gradle settings:</strong> <a href="https://www.jetbrains.com/help/idea/gradle-settings.html">https://www.jetbrains.com/help/idea/gradle-settings.html</a></li>
+        <li><strong>IntelliJ IDEA — Gradle JVM selection:</strong> <a href="https://www.jetbrains.com/help/idea/gradle-jvm-selection.html">https://www.jetbrains.com/help/idea/gradle-jvm-selection.html</a></li>
+        <li><strong>IntelliJ IDEA — Gradle integration:</strong> <a href="https://www.jetbrains.com/help/idea/gradle.html">https://www.jetbrains.com/help/idea/gradle.html</a></li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Print / Save as PDF</h2>
+      <p>Open this HTML file in a browser and choose <strong>Print → Save as PDF</strong>. The print stylesheet uses A4 margins, removes screen-only decoration, wraps long code where needed, and avoids page breaks inside most callouts and tables.</p>
+      <p class="small">For best results, enable “Background graphics” if your browser offers the option; the document remains readable without it.</p>
+    </section>
+
+    <footer class="footer">
+      <strong>Guide scope:</strong> Java 8 (1.8) through Java 26, Gradle 9.7.1, IntelliJ IDEA, Kotlin DSL. Version-sensitive claims were checked against official Gradle and JetBrains documentation available in September 2026.
+    </footer>
+  </main>
+</body>
+</html>
